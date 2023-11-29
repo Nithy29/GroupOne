@@ -3,17 +3,17 @@
 
 #### Table of content:
 1. [Overview](#overview)
-2. [Background](https://github.com/mehassanhmood/GroupOne#background)
-3. [Project Structure](https://github.com/mehassanhmood/GroupOne#project-structure)
-4. [Call Center Application using AWS Connect](https://github.com/mehassanhmood/GroupOne#call-center-application-using-aws-connect)
-5. [Architectural Diagramm](https://github.com/mehassanhmood/GroupOne#architectural-diagramm)
-6. [Call Center Agent Dashboard](https://github.com/mehassanhmood/GroupOne#call-center-agent-dashboard)
-7. [Provisioning using Terraform](https://github.com/mehassanhmood/GroupOne#provisioning-using-terraform)
-8. [Setting up FrontEnd](https://github.com/mehassanhmood/GroupOne#setting-up-frontEnd)
-9. [Installation of Required Packages](https://github.com/mehassanhmood/GroupOne#installation-of-required-packages)
-10. [Installation of Flask](https://github.com/mehassanhmood/GroupOne#installation-of-flask)
-11. [Contributors](https://github.com/mehassanhmood/GroupOne#contributors)
-12. [License](https://github.com/mehassanhmood/GroupOne#license)
+2. [Background](#background)
+3. [Project Structure](#project-structure)
+4. [Call Center Application using AWS Connect](#call-center-application-using-aws-connect)
+5. [Architectural Diagramm](#architectural-diagramm)
+6. [Call Center Agent Dashboard](#call-center-agent-dashboard)
+7. [Provisioning using Terraform](#provisioning-using-terraform)
+8. [Setting up FrontEnd](#setting-up-frontEnd)
+9. [Installation of Required Packages](#installation-of-required-packages)
+10. [Installation of Flask](#installation-of-flask)
+11. [Contributors](#contributors)
+12. [License](#license)
 
 
 ## Overview
@@ -62,7 +62,7 @@ We have included a lab to kick start the project, providing a solid starting poi
 
 
 
-## Provisioning using Terraform
+# Provisioning using Terraform
 
 <div style="text-align:center;">    
     <img src="images/Terra.png" alt="Terraform" width="700" height="500"  style="display:inline-block;">
@@ -71,7 +71,7 @@ We have included a lab to kick start the project, providing a solid starting poi
 The [Terraform](/Terraform/ )directory contains all the necessary Terraform code to provision the required AWS resources for this workshop.
 
 
-## Setting up FrontEnd
+# Setting up FrontEnd
 
 The FrontEnd uses Flask to render the web page, and the back end code is written in Python. Follow these steps to set it up:
 
@@ -85,12 +85,15 @@ The FrontEnd uses Flask to render the web page, and the back end code is written
 2. Place Python code in the **'/FrontEnd'** directory and HTML files in the **'/templates'** directory.
 3. Clone the FrontEnd directory to the EC2 instance using **'git clone'**.
 4. Start the Flask server with the command:
-    `flask --app app run --debug`
+    `flask --app app run --debug` or
+    `python3 app.py`
+
 
 This will start the application. The screen will look like as follow.
 ![Flaks Screen](images/flask.jpg)
 
 5. Obtain the public IP address of the EC2 instance and access the application in a web browser.
+6. The port for this will be '8080' if you use to access the application through public IP.
 
 <div style="text-align:center;">    
     <img src="images/DecOps.jpg" alt="Terraform" width="700" height="300"  style="display:inline-block;">
