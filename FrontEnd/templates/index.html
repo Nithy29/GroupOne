@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Actions</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Container for form groups */
+        .form-container {
+            text-align: center;
+        }
+
+        /* Container for each group */
+        .form-group {
+            margin-bottom: 20px;
+            display: inline-block;
+            vertical-align: top;
+            border: 1px solid #740505;
+            padding: 10px;
+            margin-right: 20px; /* Adjust as needed */
+        }
+
+        form {
+            display: inline-block; 
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input {
+            width: 300px;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .submit {
+            background-color: #263792;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .submit:hover {
+            background-color: #6076f3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #responseContainer {
+            margin-top: 10px;
+            color: red;
+        }
+
+        .rspUpload.success,
+        .rspStartGlue.success,
+        .rspUpdateDB.success,
+        .rspAllRcdDB.success {
+           color: green;
+        }
+
+        .rspUpload.error,
+        .rspStartGlue.error,
+        .rspUpdateDB.error,
+        .rspAllRcdDB.error {
+           color: rgb(128, 0, 0);
+        }
+
+        #info-label {
+            display: block;
+            margin: 10px auto; /* Center the label */
+            color: green;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>DevOps Actions</h1>
+
+    <!-- Container for form groups -->
+    <div class="form-container">
+        <!-- Group 1: Upload to S3 Form -->
+        <div class="form-group">
+            <form id="uploadToS3Form">
+                <label for="filename">File Name:</label>
+                <input type="text" name="filename" id="filename" required/><br><br>
+                
+                <label for="filecontent">File Content:</label>
+                <input type="text" name="filecontent" id="filecontent" required/><br><br>
+                <input class="submit" type="submit" value="Upload to S3">
+                <span id="rspUpload"></span>
+            </form>
+        </div>
+
+        <!-- Group 2: DynamoDB Form -->
+        <div class="form-group">
+            <!-- Upload to DynamoDB Form -->
+            <form id="uploadTodynamoDB">
+                <label class="test" for="data">Data:</label>
+                <input type="text" id="dbdata" required/><br>
+                <input class="submit" type="submit" value="Create Record">
+                <span id="rspUpdateDB"></span>
+            </form><br><br>
+
+            <!-- Show All Entries Form -->
+            <form id="dynamoDBall-entries">
+                <input class="submit" type="submit" value="Show All Entries">
+                <span id="rspAllRcdDB" ></span>
+            </form>
+        </div>
+
+        <!-- Group 3: Start Glue Job Form -->
+        <div class="form-group">
+            <form id="StartGlueJobForm">
+                <!-- <br> -->
+                <input class="submit" type="submit" value="Start Glue Job">
+                <span id="rspStartGlue" ></span>
+            </form>
+        </div>
+    </div>
+    <div>
+        <label class="MsgInfo" for="info" id="info-label"></label>
+    </div>
+
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            // Code to upload the file to s3Bucket
+            $("#uploadToS3Form").submit(function(event){
+                event.preventDefault();    // Prevent the form from submitting
+                var submit_btn = $(".submit", this);
+                submit_btn.val("Please Wait...").attr('disabled', true);
+
+                // Get form data
+                var formData = {
+                    "file_name": $("#filename").val(),
+                    "content": $("#filecontent").val()
+                };
+
+                $.ajax({            // Make AJAX request
+                    type: "POST",
+                    url: "/upload_to_s3",
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        submit_btn.val("Upload To S3").attr('disabled', false);
+                        var Msg = response.body
+                        $("#info-label").text(Msg);
+                        // $('<p class="rspUpload success"></p>').text(Msg).insertAfter(submit_btn);
+                    },
+                    error: function(xhr, status, error) {
+                        submit_btn.val("Upload To S3").attr('disabled', false);
+                        var errorMessage = "Error: " + xhr.responseText;
+                        console.error(errorMessage);
+                        $('<p class="rspUpload error"></p>').text(errorMessage).insertAfter(submit_btn);
+                    }
+                });
+            });
+
+            // Code to start Glue job
+            $("#StartGlueJobForm").submit(function(event){
+                event.preventDefault();   // Prevent the form from submitting
+                var submit_btn = $(".submit", this);
+                submit_btn.val("Please Wait...").attr('disabled', true);
+
+
+                $.ajax({                 // Make AJAX request
+                    type: "POST",
+                    url: "/Start_Glue_Job",
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(response) {
+                        submit_btn.val("Start Glue Job").attr('disabled', false);
+                        var Msg = response.body
+                        $("#info-label").text(Msg);
+                        // $('<p class="rspStartGlue success"></p>').text(Msg).insertAfter(submit_btn);
+                    },
+
+                    error: function(xhr, status, error) {
+                        submit_btn.val("Start Glue Job").attr('disabled', false);
+                        var errorMessage = "Error: " + xhr.responseText;
+                        console.error(errorMessage);
+                        $('<p class="rspStartGlue error"></p>').text(errorMessage).insertAfter(submit_btn);
+                    }
+                });
+            });
+
+            // Code to create record in  DynamoDB
+            $("#uploadTodynamoDB").submit(function(event){
+                event.preventDefault();                 // Prevent the form from submitting
+                
+                var submit_btn = $(".submit", this);
+                submit_btn.val("Please Wait...").attr('disabled', true);
+                
+                // Get form data
+                var formData = {
+                    "dynamoDB_action": "POST",
+                    "data": $("#dbdata").val(),
+                };
+
+                $.ajax({                // Make AJAX request
+                    type: "POST",
+                    url: "/upload_to_dynamodb",
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        submit_btn.val("Create Record").attr('disabled', false);
+                        var Msg = response.body
+                        $("#info-label").text(Msg);
+                        // $('<p class="rspUpdateDB success"></p>').text(Msg).insertAfter(submit_btn);
+                    },
+                    error: function(xhr, status, error) {
+                        submit_btn.val("Create Record").attr('disabled', false);
+                        var errorMessage = "Error: " + xhr.responseText;
+                        console.error(errorMessage);
+                        $('<p class="rspUpdateDB error"></p>').text(errorMessage).insertAfter(submit_btn);
+                    }
+                });
+            });
+
+            // Read all entries from DB
+            $("#dynamoDBall-entries").submit(function(event){
+                event.preventDefault();                // Prevent the form from submitting
+                var submit_btn = $(".submit", this);
+                submit_btn.val("Please Wait...").attr('disabled', true);
+                
+                // Get form data
+                var formData = {
+                    "dynamoDB_action": "GET_ALL",
+                };
+
+                $.ajax({                // Make AJAX request
+                    type: "POST",
+                    url: "/dynamodb_all_entries",
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        submit_btn.val("Show All Entries").attr('disabled', false);
+                        var Msg = "Retrieved all records"
+                        $("#info-label").text(Msg);
+                        // $('<p class="rspAllRcdDB success"></p>').html(Msg).insertAfter(submit_btn);
+                        populateTable(response);
+                    },
+                    error: function(xhr, status, error) {
+                        submit_btn.val("Show All Entries").attr('disabled', false);
+                        var errorMessage = "Error: " + xhr.responseText;
+                        $('<p class="rspAllRcdDB error"></p>').text(errorMessage).insertAfter(submit_btn);
+                        console.error("Error:", error);
+                    }
+                });
+            });
+
+
+            // Function to populate the table
+            function populateTable(data) {
+                var tableBody = $('#data-table tbody');
+                tableBody.empty(); // Clear existing data
+
+                // Check if data is a string, then parse it to an object
+                if (typeof data === 'string') {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                        return;
+                    }
+                }
+
+                // Check if data is an array
+                if (Array.isArray(data)) {
+                    // Iterate through the data and append rows to the table
+                    data.forEach(function (item) {
+                        var row = '<tr><td>' + item.id + '</td><td>' + item.data + '</td>' +
+                            '<td><button class="delete-btn" data-id="' + item.id + '">Delete</button></td></tr>';
+                        tableBody.append(row);
+                    });
+
+                    // Attach a click event handler to the delete button
+                    $('.delete-btn').on('click', function () {
+                        var recordId = $(this).data('id');
+                        deleteRecord(recordId);
+                    });
+
+                } else {
+                    console.error('Data is not an array:', data);
+                }
+            }
+
+            // Delete the selected records
+            function deleteRecord(recordId) {
+                $.ajax({                   // Make AJAX request to delete record by ID
+                    type: "POST",
+                    url: "/delete_record", // Create a new route for deleting records
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({ id: recordId }),
+                    success: function (response) {
+                        var Msg = response.body
+                        $("#info-label").text(Msg);
+                        fetchTableData();   // Reload or fetch updated data after deletion
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error deleting record:", error);
+                    }
+                });
+            }
+
+            function fetchTableData() {
+                var formData = {
+                    "dynamoDB_action": "GET_ALL",
+                };
+
+                // Make AJAX request to retrieve all entries
+                $.ajax({
+                    type: "POST",
+                    url: "/dynamodb_all_entries",
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        populateTable(response);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
