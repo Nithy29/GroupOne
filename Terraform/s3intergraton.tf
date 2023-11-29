@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------------
+# Creation of s3Bucket
+# ------------------------------------------------------------------------------
+
 
 # Creating the s3 Bucket to be used bt lambda function to upload files
 resource "aws_s3_bucket" "s3Bucket" {
@@ -13,6 +17,10 @@ resource "aws_s3_bucket_ownership_controls" "s3_Owner" {
   }
 }
 
+
+# ------------------------------------------------------------------------------
+# Creation of lambda function related objects
+# ------------------------------------------------------------------------------
 
 # Create an IAM role for Lambda execution
 resource "aws_iam_role" "lambdaRun" {
@@ -75,6 +83,12 @@ resource "aws_iam_role_policy_attachment" "policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.lambdaRun.name
 }
+
+
+
+# ------------------------------------------------------------------------------
+# Creation of API Gateway related objects
+# ------------------------------------------------------------------------------
 
 
 # Create the rest API in api gateway
@@ -154,8 +168,8 @@ resource "aws_api_gateway_deployment" "deploy" {
 }
 
 
-# Output the URL of the API Gateway
-output "api_gateway_url" {
-  value = aws_api_gateway_deployment.deploy.invoke_url
-}
+# # Output the URL of the API Gateway
+# output "api_gateway_url" "s3Bucket" {
+#   value = aws_api_gateway_deployment.deploy.invoke_url
+# }
 

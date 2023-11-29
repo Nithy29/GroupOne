@@ -89,7 +89,7 @@ resource "aws_lambda_function" "invoke_glue_job" {
 
 
 # Attache role policy to the role
-resource "aws_iam_role_policy" "lambdaRunPolicy" {
+resource "aws_iam_role_policy" "lambdaInvokePolicy" {
   name   = "groupOnelambdaRunPolicy"
   role   = aws_iam_role.lambda_execution_role.name
   policy = jsonencode({
@@ -136,30 +136,30 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy" {
 # ------------------------------------------------------------------------------
 
 # Create an API Gateway
-resource "aws_api_gateway_rest_api" "restAPI" {
+resource "aws_api_gateway_rest_api" "restAPIStart" {
   name        = "groupOneStartGlueJob"
   description = "My API Gateway"
 }
 
 # Create a resource in the API Gateway
-resource "aws_api_gateway_resource" "apiResource" {
-  rest_api_id = aws_api_gateway_rest_api.restAPI.id
-  parent_id   = aws_api_gateway_rest_api.restAPI.root_resource_id
+resource "aws_api_gateway_resource" "apiResourceStart" {
+  rest_api_id = aws_api_gateway_rest_api.restAPIStart.id
+  parent_id   = aws_api_gateway_rest_api.restAPIStart.root_resource_id
   path_part   = "invoke"
 }
 
 # Create a POST method for the resource
 resource "aws_api_gateway_method" "methodAPI" {
-  rest_api_id   = aws_api_gateway_rest_api.restAPI.id
-  resource_id   = aws_api_gateway_resource.apiResource.id
+  rest_api_id   = aws_api_gateway_rest_api.restAPIStart.id
+  resource_id   = aws_api_gateway_resource.apiResourceStart.id
   http_method   = "POST"
   authorization = "NONE"
 }
 
 # Connect the method to the Lambda function
 resource "aws_api_gateway_integration" "apiIntergration" {
-  rest_api_id             = aws_api_gateway_rest_api.restAPI.id
-  resource_id             = aws_api_gateway_resource.apiResource.id
+  rest_api_id             = aws_api_gateway_rest_api.restAPIStart.id
+  resource_id             = aws_api_gateway_resource.apiResourceStart.id
   http_method             = aws_api_gateway_method.methodAPI.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -171,22 +171,22 @@ resource "aws_api_gateway_integration" "apiIntergration" {
 
 
 # Deploy the API Gateway
-resource "aws_api_gateway_deployment" "deploy" {
+resource "aws_api_gateway_deployment" "deployStartJob" {
   depends_on  = [aws_api_gateway_integration.apiIntergration]
-  rest_api_id = aws_api_gateway_rest_api.restAPI.id
+  rest_api_id = aws_api_gateway_rest_api.restAPIStart.id
   stage_name  = "prod"
 }
 
 
-resource "aws_lambda_permission" "permission" {
+resource "aws_lambda_permission" "permissionStartJob" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.invoke_glue_job.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.restAPI.execution_arn}/*/${aws_api_gateway_method.methodAPI.http_method}/${aws_api_gateway_resource.apiResource.path_part}"
+  source_arn    = "${aws_api_gateway_rest_api.restAPIStart.execution_arn}/*/${aws_api_gateway_method.methodAPI.http_method}/${aws_api_gateway_resource.apiResourceStart.path_part}"
 }
 
 # Output the URL of the API Gateway
-output "api_gateway_url" {
-  value = aws_api_gateway_deployment.deploy.invoke_url
-}
+# output "api_gateway_url" {
+#   value = aws_api_gateway_deployment.deploy.invoke_url
+# }
