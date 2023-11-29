@@ -5,9 +5,9 @@ import json
 app = Flask(__name__)
 
 # Replace these with your API Gateway endpoints
-s3_upload_url = "https://d8dpqqn6gk.execute-api.ca-central-1.amazonaws.com/prod/Upload"
-dynamodb_upload_url = "https://nj6k0aca96.execute-api.ca-central-1.amazonaws.com/prod/data"
-startJob_url = "https://c9ejkwny1h.execute-api.ca-central-1.amazonaws.com/prod/invoke"
+s3_upload_url = "https://sj56tsa4d0.execute-api.ca-central-1.amazonaws.com/prod/Upload"
+dynamodb_upload_url = "https://4yrmzxe9gb.execute-api.ca-central-1.amazonaws.com/prod/data"
+startJob_url = "https://hswz0mrkyd.execute-api.ca-central-1.amazonaws.com/prod/invoke"
 
 @app.route('/')
 def index():
@@ -71,6 +71,14 @@ def upload_to_dynamodb():
 # Retrieve all entry from DB
 @app.route('/dynamodb_all_entries', methods=['POST'])
 def dynamodb_all_entries():
+    data = request.get_json()
+    response = requests.post(dynamodb_upload_url, json.dumps(data))
+    return response.text
+
+
+# Update Entry from DB
+@app.route('/update_the_record', methods=['POST'])
+def update_the_record():
     data = request.get_json()
     response = requests.post(dynamodb_upload_url, json.dumps(data))
     return response.text

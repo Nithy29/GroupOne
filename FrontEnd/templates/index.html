@@ -41,6 +41,15 @@
             margin-bottom: 5px;
             color: #333;
         }
+        button , .submit {
+            margin : 0px 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
         input {
             width: 300px;
@@ -79,7 +88,7 @@
         th, td {
             border: 1px solid #ddd;
             padding: 12px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
@@ -111,6 +120,12 @@
             margin: 10px auto; /* Center the label */
             color: green;
             text-align: center;
+        }
+        .edit-btn{
+            background-color: #4646a9;
+        }
+        .delete-btn{
+            background-color: #e43f3f;
         }
     </style>
 </head>
@@ -167,6 +182,7 @@
             <tr>
                 <th>ID</th>
                 <th>Data</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -175,7 +191,10 @@
     </table>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
+    "use strict";
+    jQuery(function($){
         $(document).ready(function(){
 
             // Code to upload the file to s3Bucket
@@ -322,21 +341,99 @@
                 if (Array.isArray(data)) {
                     // Iterate through the data and append rows to the table
                     data.forEach(function (item) {
-                        var row = '<tr><td>' + item.id + '</td><td>' + item.data + '</td>' +
-                            '<td><button class="delete-btn" data-id="' + item.id + '">Delete</button></td></tr>';
+                        var row = '<tr><td>' + item.id + '</td><td data-item_id='+item.id+'>' + item.data + '</td>' +
+                            '<td><button class="edit-btn" data-id="' + item.id + '">Edit</button>' +
+                            '<button class="delete-btn" data-id="' + item.id + '">Delete</button></td></tr>';
                         tableBody.append(row);
-                    });
-
-                    // Attach a click event handler to the delete button
-                    $('.delete-btn').on('click', function () {
-                        var recordId = $(this).data('id');
-                        deleteRecord(recordId);
                     });
 
                 } else {
                     console.error('Data is not an array:', data);
                 }
             }
+            
+            // Edit
+            $(document).on('click', '.edit-btn', function(e){
+                e.preventDefault();
+                var recordId = $(this).data('id');
+                var td = $('td[data-item_id='+recordId+']'); //whole td
+                if($(td).hasClass("update-td")){
+                    return;
+                }
+                var input_txt = $(td).text(); //td text
+                $(td).html('<input type="text" name="update_record" data-id='+recordId+' value="'+input_txt+'">');
+                $(td).addClass("update-td");
+                $(this).text("Save");
+                $(this).addClass("update-record")
+            })
+            
+            // updating
+            $(document).on('click', '.update-record', function(e){
+                e.preventDefault();
+                
+                var mine = $(this);
+                var recordId = $(this).data('id');
+                var updated_val = $('input[data-id='+recordId+']').val();
+                
+                var data = {
+                  "dynamoDB_action": "UPDATE",
+                  "data": updated_val,
+                  "pathParameters": {
+                    "id": recordId
+                  }
+                }
+                 $.ajax({                   // Make AJAX request to delete record by ID
+                    type: "POST",
+                    url: "/update_the_record", // Create a new route for deleting records
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        Swal.fire({
+                          title: "Updated!",
+                          text: "Record has been Updated Successfully.",
+                          icon: "success"
+                        }).then(function () {
+                            
+                            var td = $('td[data-item_id='+recordId+']'); //whole td
+                            $(td).text(updated_val);
+                            $(mine).text("Edit");
+                            $(td).removeClass("update-td");
+                            $(mine).removeClass("update-record");
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error Updating record:", error);
+                    }
+                });
+                
+            })
+            
+            // Attach a click event handler to the delete button
+            $(document).on('click', '.delete-btn', function(e){
+                
+                e.preventDefault();
+                var recordId = $(this).data('id');
+                Swal.fire({
+                  title: "Are you sure?",
+                  text: "You won't be able to revert this!",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                      
+                    Swal.fire({
+                      title: "Deleted!",
+                      text: "Record has been deleted.",
+                      icon: "success"
+                    }).then(function () {
+                        deleteRecord(recordId);
+                    })
+                  }
+                });
+            });
 
             // Delete the selected records
             function deleteRecord(recordId) {
@@ -376,6 +473,7 @@
                 });
             }
         });
+    });
     </script>
 </body>
 </html>
