@@ -1,6 +1,21 @@
 # Provioning AWS resources using Terraform
 ![FronEnd](images/DecOps.jpg)
 
+#### Table of content:
+1. [Overview](https://github.com/mehassanhmood/GroupOne#overview)
+2. [Background](https://github.com/mehassanhmood/GroupOne#background)
+3. [Project Structure](https://github.com/mehassanhmood/GroupOne#project-structure)
+4. [Call Center Application using AWS Connect](https://github.com/mehassanhmood/GroupOne#call-center-application-using-aws-connect)
+5. [Architectural Diagramm](https://github.com/mehassanhmood/GroupOne#architectural-diagramm)
+6. [Call Center Agent Dashboard](https://github.com/mehassanhmood/GroupOne#call-center-agent-dashboard)
+7. [Provisioning using Terraform](https://github.com/mehassanhmood/GroupOne#provisioning-using-terraform)
+8. [Setting up FrontEnd](https://github.com/mehassanhmood/GroupOne#setting-up-frontEnd)
+9. [Installation of Required Packages](https://github.com/mehassanhmood/GroupOne#installation-of-required-packages)
+10. [Installation of Flask](https://github.com/mehassanhmood/GroupOne#installation-of-flask)
+11. [Contributors](https://github.com/mehassanhmood/GroupOne#contributors)
+12. [License](https://github.com/mehassanhmood/GroupOne#license)
+
+
 ## Overview
 This project demonstrates the capabilities of Terraform by provisioning various AWS resources. The key components include API Gateway, Lambda Functions, Glue Job, DynamoDB, and an S3 Bucket
 
@@ -95,23 +110,23 @@ Update Package Manager
 - Install Python PIP
     `sudo yum install python3-pip -y`
 
-- Install Python3:
+- Install Python3
     `sudo yum install python3 -y`
 
 - Verify Installation:
     `python3 --version`
 
 
-### Installation of Flask: 
-- Use 'pip' to install Flask:
+### Installation of Flask
+- Use 'pip' to install Flask
     `pip3 install Flask`
 
-- Verify Flask installation:
+- Verify Flask installation
     `flask --version`
 
 
 
-## Contributors :
+## Contributors
 ●   **Project Manager:** Sarvan Veluppillai   
 ●	**Cloud Architect:** Zikora Orakwe   
 ●	**Developers:** Ammar Ahmad, sarvan Veluppillai  
