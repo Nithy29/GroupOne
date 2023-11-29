@@ -40,7 +40,7 @@ All work files are organized within the "Projects" directory:
 
 ### Call Center Agent Dashboard
 <div style="text-align:center;">    
-    <img src="images/CCP.png" alt="AWS Connect" width="400" height="600"  style="display:inline-block;">
+    <img src="images/CCP.png" alt="AWS Connect" width="550" height="600"  style="display:inline-block;">
 </div>
 
 We have included a lab to kick start the project, providing a solid starting point that you can customize to meet your requirements. You can access the lab [here](https://catalog.us-east-1.prod.workshops.aws/workshops/d1f03aa4-9605-4925-aa18-e82819feb069/en-US).
@@ -111,11 +111,11 @@ Update Package Manager
 
 
 
-#### Contributors :
-●   **Project Manager:** Sarvan Veluppillai
-●	**Cloud Architect:** Zikora Orakwe
-●	**Developers:** Ammar Ahmad, sarvan Veluppillai
-●	**AWS Account Manager:** Jing Yu
+## Contributors :
+●   **Project Manager:** Sarvan Veluppillai   
+●	**Cloud Architect:** Zikora Orakwe   
+●	**Developers:** Ammar Ahmad, sarvan Veluppillai  
+●	**AWS Account Manager:** Jing Yu  
 
 
 ## License
