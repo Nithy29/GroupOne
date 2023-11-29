@@ -2,7 +2,7 @@
 ![FronEnd](images/DecOps.jpg)
 
 #### Table of content:
-1. [Overview](https://github.com/mehassanhmood/GroupOne#overview)
+1. [Overview](#overview)
 2. [Background](https://github.com/mehassanhmood/GroupOne#background)
 3. [Project Structure](https://github.com/mehassanhmood/GroupOne#project-structure)
 4. [Call Center Application using AWS Connect](https://github.com/mehassanhmood/GroupOne#call-center-application-using-aws-connect)
